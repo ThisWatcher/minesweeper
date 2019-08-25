@@ -5,21 +5,15 @@ import './index.css';
 class Square extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            isExposed: false,
-            value: ''
-        };
     }
 
     render() {
         return (
             <button
-                className={`square ${this.state.isExposed ? 'exposed' : ''}`}
-                onClick={() => this.setState({isExposed: true})}
-                >
-                {/*{this.state.isExposed ? this.props.value : ''}*/}
-                {this.props.isBomb ? '\u2714' :  ''}
-                {this.props.number > 0 &&  !this.props.isBomb?  this.props.number : ''}
+                className={`square ${this.props.isExposed ? 'exposed' : ''}`}
+                onClick={() => {this.props.onClick();}}>
+                    {this.props.isBomb ? '\u2714' :  ''}
+                    {this.props.isExposed && this.props.number > 0 &&  !this.props.isBomb?  this.props.number : ''}
             </button>
         );
     }
@@ -28,34 +22,23 @@ class Square extends React.Component {
 class Board extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			rows: 10,
-			columns: 10,
-            bombs: 10
-		};
-	}
-	
-	renderSquare(i, isBomb, number) {
-		return <Square
-            key={i}
-            value={i}
-            isBomb={isBomb}
-            number={number}/>;
-	}
 
-	render() {
+		const bombs = 10;
+		const rows = 8;
+		const columns = 8;
         const board = [];
         //make board and place bombs?
         //place bombs atskritai padaryti?
-        var bombsToPlace = this.state.bombs;
-        for (var i = 0; i < this.state.rows; i++) {
+        var bombsToPlace = bombs;
+        for (var i = 0; i < rows; i++) {
             const row = [];
-            for (var j = 0; j < this.state.columns; j++) {
+            for (var j = 0; j < columns; j++) {
                 row.push(
                     {
                         row: i,
                         column: j,
                         isBomb: bombsToPlace > 0,
+                        isExposed: false,
                         number: 0
                     }
                 );
@@ -67,8 +50,8 @@ class Board extends React.Component {
         //shuffle
         board.map((row, rowIndex) => {
             row.map((square, columnIndex) => {
-                var newRowIndex = Math.floor(Math.random() * this.state.rows);
-                var newColumnIndex = Math.floor(Math.random() * this.state.columns);
+                var newRowIndex = Math.floor(Math.random() * rows);
+                var newColumnIndex = Math.floor(Math.random() * columns);
                 var tempSquareCopy1 = board[newRowIndex][newColumnIndex];
 
                 tempSquareCopy1.row = square.row;
@@ -82,7 +65,7 @@ class Board extends React.Component {
             });
         });
 
-        //shuffle
+        //numbers
         const numberOffsets = [
             {x:-1, y:1},  {x:0, y:1},  {x:1, y:1},
             {x:-1, y:0},               {x:1, y:0},
@@ -101,14 +84,64 @@ class Board extends React.Component {
                 }
             });
         });
-        
-        const dataRow = board.map((row, rowIndex) => {
+
+		this.state = {
+			rows: rows,
+			columns: columns,
+            bombs: bombs,
+            board: board
+		};
+	}
+	
+	renderSquare(square) {
+		return <Square
+            key={square.row * 10 + square.column}
+            value={square.row * 10 + square.column}
+            isBomb={square.isBomb}
+            number={square.number}
+            isExposed={square.isExposed}
+            onClick={() => this.handleClick(square)}/>;
+	}
+
+    handleClick(square) {
+        const board = this.state.board.slice();
+        board[square.row][square.column].isExposed = true;
+        this.setState({board: board});
+        if (!square.number) {
+            this.uncoverSquares(square);
+        }
+    }
+
+    uncoverSquares(square) {
+        const board = this.state.board.slice();
+        const numberOffsets = [
+            {x:-1, y:1},  {x:0, y:1},  {x:1, y:1},
+            {x:-1, y:0},               {x:1, y:0},
+            {x:-1, y:-1}, {x:0, y:-1}, {x:1, y:-1}
+        ];
+        numberOffsets.map((numberOffset) => {
+            if (typeof board[square.row + numberOffset.x] !== 'undefined'
+                && typeof board[square.row + numberOffset.x][square.column + numberOffset.y] !== 'undefined'
+                && !board[square.row + numberOffset.x][square.column + numberOffset.y].isBomb
+                && !board[square.row + numberOffset.x][square.column + numberOffset.y].isExposed) {
+                board[square.row + numberOffset.x][square.column + numberOffset.y].isExposed = true;
+                this.setState({board: board});
+                if (!board[square.row + numberOffset.x][square.column + numberOffset.y].number > 0) {
+                    this.uncoverSquares(board[square.row + numberOffset.x][square.column + numberOffset.y]);
+                }
+            }
+        });
+
+    }
+
+	render() {
+        const dataRow = this.state.board.map((row, rowIndex) => {
             return (
                 <div key={rowIndex}>
                     {
-                        row.map((square, columnIndex) => {
+                        row.map((square) => {
                             return (
-                                this.renderSquare(square.row * 10 + square.column, square.isBomb, square.number)
+                                this.renderSquare(square)
                             );
                         })
                     }
