@@ -1,5 +1,5 @@
 import React from 'react';
-
+// padaryti funkcija classname logikai
 class Square extends React.Component {
     constructor(props) {
         super(props);

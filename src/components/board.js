@@ -12,9 +12,9 @@ class Board extends React.Component {
         super(props);
 
         const gameIsLive = true;
-        const bombs = 20;
-        const rowsCount = 10;
-        const columnsCount = 10;
+        const bombs = this.props.bombs || 10;
+        const rowsCount = this.props.height || 10;
+        const columnsCount = this.props.width || 10;
         let board = [];
 
         board = makeBoard(rowsCount, columnsCount);
@@ -31,6 +31,7 @@ class Board extends React.Component {
             gameLost: false,
         };
     }
+
 
     renderSquare(square) {
         var squareNumber = square.row * 10 + square.column;
@@ -120,7 +121,7 @@ class Board extends React.Component {
 
         const dataRow = this.state.board.map((row, rowIndex) => {
             return (
-                <div key={rowIndex}>
+                <div key={rowIndex} className="clearfix">
                     {
                         row.map((square) => {
                             return (
