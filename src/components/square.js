@@ -1,5 +1,5 @@
 import React from 'react';
-// padaryti funkcija classname logikai
+
 class Square extends React.Component {
     constructor(props) {
         super(props);
@@ -9,15 +9,24 @@ class Square extends React.Component {
         e.preventDefault();
     }
 
+    text () {
+        if (/*this.props.isExposed &&*/ this.props.isBomb) {
+            // debugging
+            return 'B';
+        } else if (this.props.isMarked) {
+            return '\u2714';
+        } else if (this.props.isExposed && this.props.number > 0) {
+            return this.props.number;
+        }
+    }
+
     render() {
         return (
             <button
                 className={`square ${this.props.isExposed ? 'exposed' : ''}`}
                 onContextMenu={(e) => {this.props.onContextMenu(); this.preventRightClickEvent(e)}}
                 onClick={() => {this.props.onClick()}}>
-                {/*this.props.isExposed &&*/ this.props.isBomb ? 'B' :  ''}
-                {this.props.isMarked ? '\u2714' :  ''}
-                {this.props.isExposed && this.props.number > 0 &&  !this.props.isBomb?  this.props.number : ''}
+                {this.text()}
             </button>
         );
     }
