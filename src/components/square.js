@@ -1,15 +1,11 @@
 import React from 'react';
 
 class Square extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     preventRightClickEvent(e) {
         e.preventDefault();
     }
 
-    text () {
+    text() {
         if (/*this.props.isExposed &&*/ this.props.isBomb) {
             // debugging
             return 'B';
@@ -20,10 +16,18 @@ class Square extends React.Component {
         }
     }
 
+    cssClasses() {
+        let classes = ['square'];
+        if (this.props.isExposed) {
+            classes.push('exposed');
+        }
+        return classes.join(' ');
+    }
+
     render() {
         return (
             <button
-                className={`square ${this.props.isExposed ? 'exposed' : ''}`}
+                className={this.cssClasses()}
                 onContextMenu={(e) => {this.props.onContextMenu(); this.preventRightClickEvent(e)}}
                 onClick={() => {this.props.onClick()}}>
                 {this.text()}

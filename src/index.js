@@ -5,21 +5,37 @@ import Board from './components/board.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-//pirmas ejimas visada ant tuscio?
+function GameWon(props) {
+    if (props.gameWon) {
+        return <h1>You won</h1>;
+    }
+   return null;
+}
+
+function GameLost(props) {
+    if (props.gameLost) {
+        return <h1>You Lost</h1>;
+    }
+    return null;
+
+}
 
 class Game extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
-            bombs: 10,
+            bombs: 5,
             height: 10,
             width: 10,
-            isSubmitted: false
+            isSubmitted: false,
+            gameWon: false,
+            gameLost: false,
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleVictory = this.handleVictory.bind(this);
+        this.handleDefeat = this.handleDefeat.bind(this);
     }
 
     handleChange(event) {
@@ -33,9 +49,19 @@ class Game extends React.Component {
         event.preventDefault();
     }
 
+    handleVictory() {
+        this.setState({gameWon: true});
+    }
+
+    handleDefeat() {
+        this.setState({gameLost: true});
+    }
+
     render() {
         return (
             <div className="container">
+                <GameWon gameWon={this.state.gameWon} />
+                <GameLost gameLost={this.state.gameLost} />
                 <div className="row justify-content-center">
                     <div className="col-6 text-center">
                         {!this.state.isSubmitted &&
@@ -76,7 +102,9 @@ class Game extends React.Component {
                         <div className="game-board">
                             {this.state.isSubmitted && <Board bombs={this.state.bombs}
                                                               height={this.state.height}
-                                                              width={this.state.width}/>}
+                                                              width={this.state.width}
+                                                              onVictory={this.handleVictory}
+                                                              onDeafeat={this.handleDefeat}/>}
                         </div>
                     </div>
                 </div>

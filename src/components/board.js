@@ -7,6 +7,7 @@ const surroundingSquares = [
     {x:-1, y:-1}, {x:0, y:-1}, {x:1, y:-1}
 ];
 
+// game is live kai victory ir defeat false
 class Board extends React.Component {
     constructor(props) {
         super(props);
@@ -32,6 +33,13 @@ class Board extends React.Component {
         };
     }
 
+    handleVictory(e) {
+        this.props.onVictory(e);
+    }
+
+    handleDefeat(e) {
+        this.props.onDeafeat(true);
+    }
 
     renderSquare(square) {
         var squareNumber = square.row * 10 + square.column;
@@ -65,6 +73,7 @@ class Board extends React.Component {
                     this.uncoverSquares(square);
                 }
                 if (calculateVictory(this.state.board.slice())) {
+                    this.handleVictory();
                     this.state.gameIsLive = false;
                 }
             }
@@ -108,17 +117,7 @@ class Board extends React.Component {
         return this.state.bombs - placedBombs;
     }
 
-
     render() {
-        const isGameWon = calculateVictory(this.state.board);
-
-        let status;
-        if (isGameWon) {
-            status = 'victory'
-        } else if (this.state.gameLost) {
-            status = 'defeat'
-        }
-
         const dataRow = this.state.board.map((row, rowIndex) => {
             return (
                 <div key={rowIndex} className="clearfix">
@@ -135,7 +134,6 @@ class Board extends React.Component {
 
         return (
             <div>
-                <div>{status}</div>
                 <div>Remaining Bombs: {this.remainingBombsToPlace()}</div>
                 <div>{dataRow}</div>
             </div>
