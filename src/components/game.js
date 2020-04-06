@@ -140,15 +140,9 @@ class Game extends React.Component {
                     <div className="text-center">
                         <div>Remaining Bombs: {this.remainingBombsToPlace()}</div>
                         <div className="game-board">
-                            <Board bombs={this.props.bombs}
-                                   height={this.props.height}
-                                   width={this.props.width}
-                                   board={this.state.board}
-                                   gameIsLive={this.gameIsLive()}
-                                   onVictory={this.handleVictory}
+                            <Board board={this.state.board}
                                    onClick={this.handleClick}
-                                   onContextMenuClick={this.handleContextMenuClick}
-                                   onDeafeat={this.handleDefeat}/>
+                                   onContextMenuClick={this.handleContextMenuClick}/>
                         </div>
                     </div>
                 </div>
