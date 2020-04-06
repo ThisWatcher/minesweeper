@@ -6,10 +6,9 @@ class Square extends React.Component {
     }
 
     text() {
-        if (/*this.props.isExposed &&*/ this.props.isBomb) {
-            // debugging
+        if (this.props.isExposed && this.props.isBomb) {
             return 'B';
-        } else if (this.props.isMarked) {
+        } else if (this.props.isMarkedAsBomb) {
             return '\u2714';
         } else if (this.props.isExposed && this.props.number > 0) {
             return this.props.number;
